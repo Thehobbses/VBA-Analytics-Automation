@@ -1,0 +1,173 @@
+Attribute VB_Name = "Data Validation Loop and PPT Automation"
+
+Sub LoopDV()
+
+    'This is the file path to the folder where you want to save the files
+    'You should only need to edit this one thing if all other formatting has stayed the same
+    Dim destinationFolder As String
+    destinationFolder = "\\papamurphys.local\vancouver\shared\Home Off - Analytics\Jake Jirsa\Data Sets\2021 Nov Swings\"
+    
+    
+    '----------------------
+    'DATA VALIDATION LOOP SETUP
+    '----------------------
+    
+    'Courtesy of: https://exceloffthegrid.com/loop-through-each-item-in-a-data-validation-list-with-vba/
+    
+    'Initialize core variables
+    Dim rng As Range
+    Dim dataValidationArray As Variant
+    Dim i As Integer
+    Dim rows As Integer
+    
+    'Set the cell which contains the Data Validation list
+    Set rng = Sheets("DMA Validation Loop").Range("A1")
+    
+    'If Data Validation list is not a range, ignore errors
+    On Error Resume Next
+    
+    'Create an array from the Data Validation formula, without creating a multi-dimensional array from the range
+    rows = Range(Replace(rng.Validation.Formula1, "=", "")).rows.Count
+    ReDim dataValidationArray(1 To rows)
+    
+    'Handles an error where the first element of the Data Validation list is blank
+    If IsEmpty(Sheets("DMA Validation Loop").Range("A1")) Then
+        ReDim dataValidationArray(2 To rows)
+    End If
+    
+    'Replacing values in the validation formula to make it into an array that can be iterated
+    For i = 1 To rows
+        dataValidationArray(i) = Range(Replace(rng.Validation.Formula1, "=", "")).Cells(i, 1)
+    Next i
+    
+    '----------------------
+    'DATA VALIDATION LOOP ERROR HANDLING
+    '----------------------
+    
+    'If not a range, then try splitting a string
+    If Err.Number <> 0 Then
+        Err.Clear
+        dataValidationArray = Split(rng.Validation.Formula1, ",")
+    End If
+    
+    'Some other error has occured so exit sub
+    If Err.Number <> 0 Then Exit Sub
+    
+    'Reinstate error checking
+    On Error GoTo 0
+    
+    '----------------------
+    'DATA VALIDATION LOOP
+    '----------------------
+    
+    'Loop through all the values in the Data Validation Array
+    For i = LBound(dataValidationArray) To UBound(dataValidationArray)
+    
+    'Change the value in the data validation cell
+    rng.Value = dataValidationArray(i)
+    
+    'Force the sheet to recalculate
+    Application.Calculate
+    
+    
+    
+    '----------------------
+    'AUTOMATING PPT SLIDES:
+    '----------------------
+    
+    'The final file is just named after the DMA so we save the DMA name string here
+    Dim filename As String
+    Dim templatepath As String
+    filename = Sheets("DMA Validation Loop").Range("A1")
+    filename = Replace(filename, "/", "-") 'Slashes kill the automated saving because Windows interprets them as a new level in the file path
+    
+    'Create a New Presentation
+    Set PowerPointApp = GetObject(class:="PowerPoint.Application")
+            
+    'Clear the error between errors
+    Err.Clear
+     
+     'If PowerPoint is not already open then open PowerPoint
+     'This doesn't appear to work anymore so just open PowerPoint before starting (the app, not a specific ppt)
+     If PowerPointApp Is Nothing Then Set PowerPointApp = CreateObject(class:="PowerPoint.Application")
+     
+    'Set the template slides as the active presentation
+    Set myPresentation = PowerPointApp.Presentations.Open(destinationFolder & "MiscSlides.pptx")
+    
+    'Set copy ranges for each sheet in the notebook
+      Set rngeA = Sheets("Quarter over Quarter Slide").Range("B2:H8")
+      Set rngeB = Sheets("Check by Channel Slide").Range("B3:D8")
+      Set rngeC = Sheets("Day of the Week Slide").Range("B12:H20")
+      
+    'Set slides and shapes as objects
+    'Shapes hold the copied range
+      Dim mySlideA As Object
+      Dim myShapeA As Object
+      Dim mySlideB As Object
+      Dim myShapeB As Object
+      Dim mySlideC As Object
+      Dim myShapeC As Object
+      
+      
+      '----------------------
+      'PASTE AND FORMAT FROM EXCEL INTO POWERPOINT
+      '----------------------
+      
+      '----------------------
+      'The first range is documented more heavily so that the user can learn how to manipulate object placement on the slide
+      
+      rngeA.Copy                                        'Copy the range in Excel that we specified above
+      Application.Wait (Now + TimeValue("0:00:02"))     'We tell the application to wait, otherwise it can get ahead of itself and throw an error
+        Set mySlideA = myPresentation.Slides(1)         '1 is the number of the slide that we wish to edit (The first slide = 1)
+            mySlideA.Shapes.PasteSpecial DataType:=2    '2 = ppPasteEnhancedMetafile - https://docs.microsoft.com/en-us/office/vba/api/powerpoint.pppastedatatype
+            
+            
+            Set myShapeA = mySlideA.Shapes(mySlideA.Shapes.Count)   'Set active object to the copied range 1
+                myShapeA.ScaleHeight 2, msoTrue                     'Change the height scaling of the copied range by changing the number
+                myShapeA.ScaleWidth 1.5, msoTrue                    'Change the width scaling of the copied range by changing the number
+                myShapeA.Left = 3                                   'Change the left-right placement. Higher values move object further right
+                myShapeA.Top = 200                                  'Change the up-down placement. Higher values move object further down
+    
+            Application.CutCopyMode = False                         'Empty the clipboard to avoid copy errors
+            Application.Wait (Now + TimeValue("0:00:02"))           'Tell the application to wait 2 seconds before starting on next slide
+       '----------------------
+            
+      rngeB.Copy
+      Application.Wait (Now + TimeValue("0:00:02"))
+            Set mySlideB = myPresentation.Slides(2)
+            mySlideB.Shapes.PasteSpecial DataType:=2
+            Set myShapeB = mySlideB.Shapes(mySlideB.Shapes.Count)
+                myShapeB.ScaleHeight 2, msoTrue
+                myShapeB.ScaleWidth 2, msoTrue
+                myShapeB.Left = 140
+                myShapeB.Top = 200
+            Application.CutCopyMode = False
+            Application.Wait (Now + TimeValue("0:00:02"))
+            
+            
+      rngeC.Copy
+      Application.Wait (Now + TimeValue("0:00:02"))
+            Set mySlideC = myPresentation.Slides(3)
+            mySlideC.Shapes.PasteSpecial DataType:=2
+            Set myShapeC = mySlideC.Shapes(mySlideC.Shapes.Count)
+                myShapeC.ScaleHeight 1.5, msoTrue
+                myShapeC.ScaleWidth 1.5, msoTrue
+                myShapeC.Left = 100
+                myShapeC.Top = 160
+            Application.CutCopyMode = False
+            Application.Wait (Now + TimeValue("0:00:02"))
+            
+        'Save the new ppt to the preselected folder and close the active ppt
+        myPresentation.SaveAs destinationFolder & "Misc\" & filename & ".ppt"
+        myPresentation.Close
+        
+        
+        Application.DisplayAlerts = False 'Kills any notifications that might break the application
+        Application.CutCopyMode = False
+
+    'Progress to the next value in the Data Validation dropdown
+    Next i
+    End Sub
+
+
+
