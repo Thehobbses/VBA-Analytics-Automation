@@ -1,2 +1,3 @@
-# VBA-Validation-Loops-and-PPT-Automation
-This repo holds assorted files that loop through Excel data validation loops and return a PPT with elements from the Excel sheet pasted to them.
+# VBA-Marketing-Analytics-Chart/Presentation-Automation
+This tool leverages an Excel workbook to automatically build unique workbooks and presentations for distribution to the general marketing team. It was built as a way to dramatically cut down on the time and effort required to produce system-wide quarterly reports. Additionaly, the workbook and code serve as a warehouse for ad hoc analysis so that we can quickly implement it into reports and are not replicating old analysis.
+The primary requirement was that all subsequent additions to the reporting could be made without any interaction with VBA. As such, additions are made based on Excel input, a medium far more familiar to the marketing team. 
