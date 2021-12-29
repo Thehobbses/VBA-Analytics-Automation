@@ -7,7 +7,6 @@
 **Jake Jirsa – Director of Marketing Analytics –** [**jake.jirsa@papamurphys.com**](mailto:jake.jirsa@papamurphys.com)
 
 
-
 # Introduction:
 
 The Marketing team frequently receives requests from franchise owners for up-to-date information on the performance and health of their stores and DMAs. Often, the analytics required to adequately resolve these requests falls to the Performance Marketing team. Historically, these analytics have been performed on an Ad Hoc basis and expanding those reports to the system level required individual production of over 100 unique sets of Excel and PowerPoint files, one for each marketing area (DMA). For Performance Marketing, the responsibility of a standard set of quarterly marketing reports (swings) is a recent development only made possible through Visual Basic for Applications (VBA).
@@ -43,6 +42,7 @@ The analysis tool houses many worksheets that fall into four categories:
 - Data lookups that are used to populate charts
 
 The following section will cover each worksheet.
+
 
 ## Controls
 
@@ -117,6 +117,7 @@ Source: list -\&gt; [GeneralSlides.pptx, BlankFormatSlide.pptx]
 
 Pressing **Execute** will run the code using the options that the user set. It is assigned to the Execute macro.
 
+
 ## Charts:
 
 The charts worksheet is the source from which all output Excel and PowerPoint files are built. Each chart in the table draws its data from a corresponding worksheet detailed below. If the user is not looking to export, and instead just wishes to quickly verify some information about a DMA, this worksheet is a good point of reference. If the user changes the DMA but the charts do not update, simply go to the search bar in Excel and look up &quot;Calculation Options&quot; and set them to &quot;Automatic&quot;.
@@ -159,6 +160,7 @@ Loyalty Penetration is a dynamic set of tables that shows the percentage of loya
 - Source: LP Data, LP Tables
 
 Note: LP Old Tables is simply a repository for LP Tables from prior quarters. The data is just values to save on computational overhead and storage for the workbook
+
 
 ## Parameters:
 
@@ -204,7 +206,7 @@ The All Slides section is the main point of control for placement of charts in t
   - Data Type: Integer (0,1)
   - 1 = Yes, 0 = No
 
-### Drop DynaMic Slides:
+### Drop Dynamic Slides:
 
 This section communicates to the code which slides are scheduled for deletion based on information it receives from markers set in General Lookups such as [LP Sizer](#_Loyalty_Penetration:).
 
@@ -214,6 +216,7 @@ Always populate this table with **only** one of the following:
 
 - A string slide name that **exactly** matches the corresponding entry in column E
 - No data, i.e. &quot;&quot;
+
 
 ## General Lookups:
 
@@ -246,6 +249,7 @@ This section has a variety of reference information.
   - GeneralSlides.pptx: standard slide deck for swings reporting
   - BlankFormatSlide.pptx: standard mostly blank slide for individual chart and all chart output
 
+
 ## Slicers:
 
 This tab controls data flow into the data tables that populate charts. Here, the user can select filters to ensure accurate data to the current quarter. Connections for the slicers can be determined by right clicking them and selecting _Report Connections_.
@@ -273,6 +277,7 @@ For best results and to ensure no errors occur in the production of PowerPoint s
 - All rows will be the same height. This comes with many of the same considerations as column width. Avoid multi-row height merged cells, but they shouldn&#39;t break anything.
 - Avoid unnecessary additional information to aid in keeping workbook size down.
 - **Test your charts using the &quot;Missouri-Cape Girardeau MO - Paducah KY - Mt Verno&quot; DMA, as this is the longest name in the system.**
+
 
 ## Process:
 
@@ -307,6 +312,7 @@ If the developer is unfamiliar with the operation of a command, Microsoft mainta
 
 To find and open the Visual Basic Editor: [https://support.microsoft.com/en-us/office/find-help-on-using-the-visual-basic-editor-61404b99-84af-4aa3-b1ca-465bc4f45432](https://support.microsoft.com/en-us/office/find-help-on-using-the-visual-basic-editor-61404b99-84af-4aa3-b1ca-465bc4f45432)
 
+
 ## Definitions:
 
 Some basic definitions, to aid the user in understanding the following documentation:
@@ -327,9 +333,11 @@ Some basic definitions, to aid the user in understanding the following documenta
 - **Object:** VBA general variable that can represent a PowerPoint slide, file object, an Office app, etc.
 - **Collection:** VBA iterable storage container like a Python list.
 
+
 ## Navigating the VBA Environment:
 
 ![alt text](https://github.com/Thehobbses/VBA-Analytics-Automation/blob/main/Documentation/DocumentationDiagrams/VBEditorNavigation.png)
+
 
 ## Module Structure:
 
@@ -346,6 +354,7 @@ The Main module contains only one function, Execute. This is to isolate the prim
 ### Functions:
 
 This module houses all functions necessary for the analytics tools. Broadly speaking, the module is divided into 4 parts: loop controls, general functions that handle in-application work and file overhead, Excel specific functions, and PowerPoint specific functions.
+
 
 ## Variables:
 
@@ -420,7 +429,6 @@ This section covers the definitions and uses of each variable declared in the an
   - References the currently selected DMA in the Current DMA DV with slashes replaced with dashes to make the file save safe; **controls chart data population**
   - Controls: H18
   - Env\_Variables, Single\_DMA\_Loop, Local\_Folder\_Create\_Copy\_Delete, Excel\_Save, PowerPoint\_Save
-  -
 - **user\_quarter:**
   - String
   - User selected value from the Quarter DV in the Controls worksheet
@@ -596,6 +604,7 @@ This section covers the definitions and uses of each variable declared in the an
   - Parameters: M[loop\_inner\_index]
   - Current\_Chart\_Loop, Copy\_Paste\_Wait
 
+
 ## Function and Method Documentation:
 
 This section covers the functions found in the analysis tool, divided by module.
@@ -604,154 +613,154 @@ This section covers the functions found in the analysis tool, divided by module.
 
 #### Execute:
 
-**Description:**
+- **Description:**
 
-Connected to the Execute button in the Controls worksheet, this function runs the correct subfunctions based on user choices in the data validation lists. First, it loads data from the workbook and creates a new local save folder if fast saving is enabled. Based on the DMA Quantity DV, the function either runs the Data\_Validation\_Loop or Single\_DMA\_Loop function. Finally, the local temporary folder is copied to the public destination folder and then deleted if fast saving is enabled.
+  - Connected to the Execute button in the Controls worksheet, this function runs the correct subfunctions based on user choices in the data validation lists. First, it loads data from the workbook and creates a new local save folder if fast saving is enabled. Based on the DMA Quantity DV, the function either runs the Data\_Validation\_Loop or Single\_DMA\_Loop function. Finally, the local temporary folder is copied to the public destination folder and then deleted if fast saving is enabled.
 
-**Required Input Parameters:**
+- **Required Input Parameters:**
 
-None
+  - None
 
-**Variables:**
+- **Variables:**
 
-None
+  - None
 
-**Subfunctions:**
+- **Subfunctions:**
 
-Env\_Variables, Local\_Folder\_Create\_Copy\_Delete, Data\_Validation\_Loop, Single\_DMA\_Loop
+  - Env\_Variables, Local\_Folder\_Create\_Copy\_Delete, Data\_Validation\_Loop, Single\_DMA\_Loop
 
-**Used In:**
+- **Used In:**
 
-None
+  - None
 
 ### Variables:
 
 #### Env\_Variables:
 
-**Description:**
+- **Description:**
 
-Sets correct values for many public variables, called once at the start of the Execute function.
+  - Sets correct values for many public variables, called once at the start of the Execute function.
 
-**Required Input Parameters:**
+- **Required Input Parameters:**
 
-None
+  - None
 
-**Variables:**
+- **Variables:**
 
-Master, ws\_controls, ws\_parameters, ws\_charts, ws\_lookups, user\_dma, user\_export\_quanitity, user\_export\_type, user\_chart\_type, user\_quarter, user\_year, local\_destination\_folder, public\_destination\_folder, public\_template\_folder, date\_string, adhoc\_file\_name, main\_slides\_file\_name, other\_slides\_file\_name, user\_slides\_file\_name, delete\_index\_collection\_main\_slides\_range, all\_slides\_range, selected\_slides\_count, all\_slides\_count
+  - Master, ws\_controls, ws\_parameters, ws\_charts, ws\_lookups, user\_dma, user\_export\_quanitity, user\_export\_type, user\_chart\_type, user\_quarter, user\_year, local\_destination\_folder, public\_destination\_folder, public\_template\_folder, date\_string, adhoc\_file\_name, main\_slides\_file\_name, other\_slides\_file\_name, user\_slides\_file\_name, delete\_index\_collection\_main\_slides\_range, all\_slides\_range, selected\_slides\_count, all\_slides\_count
 
-**Subfunctions:**
+- **Subfunctions:**
 
-None
+  - None
 
-**Used In:**
+- **Used In:**
 
-Execute
+  - Execute
 
 ### Functions:
 
 #### Data\_Validation\_Loop:
 
-**Description:**
+- **Description:**
 
-The bulk of the logic for when DMA Quantity is set to _All_. Captures the Current DMA as an array, then iterates through this array from the first value. Excel is refreshed and recalculated on each loop. Error handling addresses a variety of errors that can arise. On each loop, the Single\_DMA\_Loop function is executed.
+  - The bulk of the logic for when DMA Quantity is set to _All_. Captures the Current DMA as an array, then iterates through this array from the first value. Excel is refreshed and recalculated on each loop. Error handling addresses a variety of errors that can arise. On each loop, the Single\_DMA\_Loop function is executed.
 
-In effect, this function is a shell around the same function set that is run for DMA Quantity set to _Selected_ that changes the Current DMA data validation list to populate charts with new data.
+  - In effect, this function is a shell around the same function set that is run for DMA Quantity set to _Selected_ that changes the Current DMA data validation list to populate charts with new data.
 
-**Required Input Parameters:**
+- **Required Input Parameters:**
 
-None
+  - None
 
-**Variables:**
+- **Variables:**
 
-data\_validation\_array, i (index), rows (index), user\_dma
+  - data\_validation\_array, i (index), rows (index), user\_dma
 
-**Subfunctions:**
+- **Subfunctions:**
 
-Excel\_Recalc, Excel\_Refresh, Single\_DMA\_Loop
+  - Excel\_Recalc, Excel\_Refresh, Single\_DMA\_Loop
 
-**Used In:**
+- **Used In:**
 
-Execute
+  - Execute
 
 #### Single\_DMA\_Loop:
 
-**Description:**
+- **Description:**
 
-This function primarily contains logic for generating correct exports: Excel, PowerPoint, or Both. If the user chooses Ad Hoc as the Quarter DV selection, a new sub-folder named for the current DMA is created in the local folder if fast saving is enabled. The function first resets user\_dma to the value in the Current DMA DV. Again, the code ensures no slashes are present in the DMA name, replacing them with dashes. Once the function determines the user&#39;s choice from the Output DV, it opens the correct applications using Excel\_Open and PowerPoint\_Open then runs the Charts\_Loop function. After the charts have looped, the function deletes the unneeded Sheet1 from new\_workbook as well as unneeded slides based on the delete\_index\_collection. Finally, the Single\_DMA\_Loop function saves the exports to the local folder unless fast saving isn&#39;t enabled, in which case it is saved directly to the public folder.
+  - This function primarily contains logic for generating correct exports: Excel, PowerPoint, or Both. If the user chooses Ad Hoc as the Quarter DV selection, a new sub-folder named for the current DMA is created in the local folder if fast saving is enabled. The function first resets user\_dma to the value in the Current DMA DV. Again, the code ensures no slashes are present in the DMA name, replacing them with dashes. Once the function determines the user&#39;s choice from the Output DV, it opens the correct applications using Excel\_Open and PowerPoint\_Open then runs the Charts\_Loop function. After the charts have looped, the function deletes the unneeded Sheet1 from new\_workbook as well as unneeded slides based on the delete\_index\_collection. Finally, the Single\_DMA\_Loop function saves the exports to the local folder unless fast saving isn&#39;t enabled, in which case it is saved directly to the public folder.
 
-**Required Input Parameters:**
+- **Required Input Parameters:**
 
-None
+  - None
 
-**Variables:**
+- **Variables:**
 
-delete\_index\_collection
+  - delete\_index\_collection
 
-**Subfunctions:**
+- **Subfunctions:**
 
-Excel\_Open, PowerPoint\_Open, Charts\_Loop, Excel\_Save, PowerPoint\_Save
+  - Excel\_Open, PowerPoint\_Open, Charts\_Loop, Excel\_Save, PowerPoint\_Save
 
-**Used In:**
+- **Used In:**
 
-Execute, Data\_Validation\_Loop
+  - Execute, Data\_Validation\_Loop
 
 #### Charts\_Loop:
 
-**Description:**
+- **Description:**
 
-Another link in the logic chain to export populated files, Charts\_Loop interprets user input in the Chart List DV to populate export files with slides specified. Based on the Chart List value, the function runs a loop that iterates from the third row of Parameters to the Nth row, where N = 3, selected\_slides\_count+2, or all\_slides\_count+2. Within that loop the function executes the Current\_Chart\_Loop. For N = 3, only the user selected slide is produced.
+  - Another link in the logic chain to export populated files, Charts\_Loop interprets user input in the Chart List DV to populate export files with slides specified. Based on the Chart List value, the function runs a loop that iterates from the third row of Parameters to the Nth row, where N = 3, selected\_slides\_count+2, or all\_slides\_count+2. Within that loop the function executes the Current\_Chart\_Loop. For N = 3, only the user selected slide is produced.
 
-**Required Input Parameters:**
+- **Required Input Parameters:**
 
-None
+  - None
 
-**Variables:**
+- **Variables:**
 
-user\_dma, user\_chart\_type, loop\_current\_chart, loop\_index\_outer
+  - user\_dma, user\_chart\_type, loop\_current\_chart, loop\_index\_outer
 
-**Subfunctions:**
+- **Subfunctions:**
 
-Current\_Chart\_Loop
+  - Current\_Chart\_Loop
 
-**Used In:**
+- **Used In:**
 
-Single\_DMA\_Loop
+  - Single\_DMA\_Loop
 
 #### Current\_Chart\_Loop:
 
-**Description:**
+- **Description:**
+ 
+  - Current\_Chart\_Loop is the deepest layer of the export file production code, handling the assignment of parameters that control chart formatting and placement in the export files. The function loops through the names of all possible charts and compares them to the current name from Charts\_Loop. On a match, the parameter variables are reassigned. Following the assignment loop, the function populates the correct export files based on the user&#39;s Output DV selection.
 
-Current\_Chart\_Loop is the deepest layer of the export file production code, handling the assignment of parameters that control chart formatting and placement in the export files. The function loops through the names of all possible charts and compares them to the current name from Charts\_Loop. On a match, the parameter variables are reassigned. Following the assignment loop, the function populates the correct export files based on the user&#39;s Output DV selection.
+  - Excel:
 
-Excel:
+    - In the new\_workbook, the function determines if there is a sheet named the same as parameter worksheet\_name. If there is, the chart is pasted to paste\_cell allowing the code to handle situations where there are charts that need several slides, but only one worksheet (i.e. Loyalty Penetration). If there isn&#39;t a matching worksheet, one is generated and the chart is pasted to paste\_cell in that sheet. The pasted charts, thanks to the Copy\_Paste\_Wait function, are reformatted to the correct column widths, row heights, and text size.
 
-In the new\_workbook, the function determines if there is a sheet named the same as parameter worksheet\_name. If there is, the chart is pasted to paste\_cell allowing the code to handle situations where there are charts that need several slides, but only one worksheet (i.e. Loyalty Penetration). If there isn&#39;t a matching worksheet, one is generated and the chart is pasted to paste\_cell in that sheet. The pasted charts, thanks to the Copy\_Paste\_Wait function, are reformatted to the correct column widths, row heights, and text size.
+  - PowerPoint:
 
-PowerPoint:
+    - In the new\_presentation, the function grabs the index for the chart then sets ppt\_slide to the correct slide from the template based on this index. The function loops through the Drop Dynamic Slides section from the Parameters worksheet. When the loop finds that the chart is dynamic, a marker is activated. When the marker is active, the ppt\_slide object is added to delete\_index\_collection.
 
-In the new\_presentation, the function grabs the index for the chart then sets ppt\_slide to the correct slide from the template based on this index. The function loops through the Drop Dynamic Slides section from the Parameters worksheet. When the loop finds that the chart is dynamic, a marker is activated. When the marker is active, the ppt\_slide object is added to delete\_index\_collection.
+    - Following the slide deletion internal loop, the function pastes the current data range to ppt\_slide. Finally, the shapes are passed to the PowerPoint\_Object\_Text\_Size function where they are iterated through and each cell in the table is resized to the correct column width, row height, and text size. The shape is moved into the correct position on the slide.
 
-Following the slide deletion internal loop, the function pastes the current data range to ppt\_slide. Finally, the shapes are passed to the PowerPoint\_Object\_Text\_Size function where they are iterated through and each cell in the table is resized to the correct column width, row height, and text size. The shape is moved into the correct position on the slide.
+- **Required Input Parameters:**
 
-**Required Input Parameters:**
+  - None
 
-None
+- **Variables:**
 
-**Variables:**
+  - loop\_index\_inner, all\_slides\_count, inner\_loop\_slide, worksheet\_name, data\_range, horizontal\_position, vertical\_position, text\_size, cell\_height, cell\_width, centered, paste\_cell, user\_export\_type, ws\_charts, ws\_chart\_worksheet, ppt\_index, ppt\_slide, ppt\_shape, delete\_dynamic\_marker,
 
-loop\_index\_inner, all\_slides\_count, inner\_loop\_slide, worksheet\_name, data\_range, horizontal\_position, vertical\_position, text\_size, cell\_height, cell\_width, centered, paste\_cell, user\_export\_type, ws\_charts, ws\_chart\_worksheet, ppt\_index, ppt\_slide, ppt\_shape, delete\_dynamic\_marker,
+- **Subfunctions:**
 
-**Subfunctions:**
+  - Excel\_Worksheet\_Exists, Copy\_Paste\_Wait, PowerPoint\_Object\_Text\_Size, PowerPoint\_Slide\_Move, Excel\_Refresh
 
-Excel\_Worksheet\_Exists, Copy\_Paste\_Wait, PowerPoint\_Object\_Text\_Size, PowerPoint\_Slide\_Move, Excel\_Refresh
+- **Used In:**
 
-**Used In:**
-
-Charts\_Loop
-
+  - Charts\_Loop
+```
 #### Copy\_Paste\_Wait:
-
+```
 **Description:**
 
 This function accepts two input parameters, an object to be copied and a place to paste it. There is logic that determines if the paste location is an Excel worksheet or PowerPoint presentation. If it is a worksheet, the formats and values are copied and pasted to the paste\_cell. Then, the column widths and heights are changed:
@@ -779,9 +788,9 @@ None
 **Used In:**
 
 Current\_Chart\_Loop
-
+```
 #### Local\_Folder\_Create\_Copy\_Delete:
-
+```
 **Description:**
 
 To save the network overhead of saving each individual file as they are built, files are sent to a local folder that is then copied in its entirety to the public drive. This function accepts several strings that determine which operation of the function is executed. It sets fso as a FileSystemObject so that VBA can create and manipulate objects in the Windows File Explorer.
@@ -817,9 +826,9 @@ None
 **Used In:**
 
 Execute, Charts\_Loop
-
+```
 #### Excel\_Open:
-
+```
 **Description:**
 
 Opens a new workbook for export.
@@ -839,9 +848,9 @@ None
 **Used In:**
 
 Single\_DMA\_Loop
-
+```
 #### Excel\_Save:
-
+```
 **Description:**
 
 If fast saving is enabled, saves the new\_workbook to the local folder then closes the document. If the user sets the Quarter DV to Ad Hoc, the file is placed into its respective DMA sub-folder. Otherwise, file is saved directly to the public folder.
@@ -861,9 +870,9 @@ None
 **Used In:**
 
 Single\_DMA\_Loop
-
+```
 #### Excel\_Refresh:
-
+```
 **Description:**
 
 VBA has a bad habit of &quot;getting ahead of itself,&quot; leading to frustrating errors. As an example, a piece of code that copies an Excel table and then pastes it to another place can attempt to paste _before_ it finishes copying data. This function essentially tells Excel to wait until it has completed its pending calculations.
@@ -883,9 +892,9 @@ None
 **Used In:**
 
 Data\_Validation\_Loop, Current\_Chart\_Loop, Copy\_Paste\_Wait Excel\_Save
-
+```
 #### Excel\_Recalc:
-
+```
 **Description:**
 
 Recalculates each worksheet in the workbook to populate charts with the correct DMA data.
@@ -905,9 +914,9 @@ None
 **Used In:**
 
 Data\_Validation\_Loop
-
+```
 #### Excel\_Worksheet\_Exists:
-
+```
 **Description:**
 
 Determines if a worksheet exists within the specified workbook. Returns false if none is found.
@@ -929,9 +938,9 @@ None
 **Used In:**
 
 Current\_Chart\_Loop
-
+```
 #### PowerPoint\_Open:
-
+```
 **Description:**
 
 Opens the PowerPoint app and a new presentation from the user specified template file path, which is minimized to the tray. If the Chart Type DV is set to All, it opens the blank template slide and extends it to the number of slides needed to capture all the data.
@@ -951,9 +960,9 @@ None
 **Used In:**
 
 Single\_DMA\_Loop
-
+```
 #### PowerPoint\_Save:
-
+```
 **Description:**
 
 If fast saving is enabled, saves new\_presentation to the correct local folder location based on whether the Quarter DV is set to Ad Hoc or not. If it is set to Ad Hoc, the presentation is saved to the DMA specific sub-folder. Otherwise, file is saved directly to the public folder.
@@ -973,9 +982,9 @@ None
 **Used In:**
 
 Single\_DMA\_Loop
-
+```
 #### PowerPoint\_Object\_Text\_Size:
-
+```
 **Description:**
 
 This function takes the table shape object on the slide and iterates through each row and column in that table to pass through every possible cell. Each cell has its text size set to the Parameters value for the chart. Similarly, rows and columns are resized to the values from the Parameters worksheet.
@@ -997,9 +1006,9 @@ None
 **Used In:**
 
 Current\_Chart\_Loop
-
+```
 #### PowerPoint\_Slide\_Move:
-
+```
 **Description:**
 
 Accepts a slide and shape then repositions that shape on the slide based on position values from the Parameters worksheet. If the slide is centered, the horizontal and vertical positioning values are ignored.
@@ -1023,15 +1032,18 @@ None
 **Used In:**
 
 Current\_Chart\_Loop
+```
 
 ### Common VBA Methods:
 
 This section covers some of the more commonly used VBA methods in the code. For the most detailed information possible, google the method and read Microsoft official documentation.
-
+```
 - Application.CutCopyMode: clear clipboard
 - Application.ScreenUpdating: prevents application from updating the screen as it calculates
 - Application.DisplayAlerts: suppresses alerts from applications
 - StrComp: compares two strings, equality = 0
+```
+
 
 ## Function Flow:
 
