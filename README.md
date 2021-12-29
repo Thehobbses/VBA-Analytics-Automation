@@ -25,7 +25,7 @@ VBA is a code language that runs in Microsoft&#39;s Office ecosystem. It powers 
 
 This tool relies on consistent folder pathing so changing certain aspects of the folder structure will break the program. If there is a need to move the main folder with all the input, output, and tool files, then this is possible by changing the outer path found in cell H23 in the &quot;Controls&quot; worksheet of the analysis tool Excel file. If there is a need to change how the folder is structured, this could feasibly be done via editing VBA code. I will cover this process further in the documentation. Otherwise, the internal structure of the main folder must retain these features and exact folder names:
 
-![alt text](https://github.com/Thehobbses/VBA-Analytics-Automation/blob/main/Documentation/Documentation%20Diagrams/FolderStructure.png)
+![alt text](https://github.com/Thehobbses/VBA-Analytics-Automation/blob/main/Documentation/DocumentationDiagrams/FolderStructure.png)
 
 One of the ways that the code was made more efficient was to produce the requested files and save them locally in a temporary folder. This temporary folder is copied and merged with the public folder that matches the year and quarter the user specifies. After the temporary folder is used and copied, it is automatically deleted by the code. This means that the user should never see this folder except during the process of running the analytics tool.
 
@@ -329,7 +329,7 @@ Some basic definitions, to aid the user in understanding the following documenta
 
 ## Navigating the VBA Environment:
 
-![alt text](https://github.com/Thehobbses/VBA-Analytics-Automation/blob/main/Documentation/Documentation%20Diagrams/VBEditorNavigation.png)
+![alt text](https://github.com/Thehobbses/VBA-Analytics-Automation/blob/main/Documentation/DocumentationDiagrams/VBEditorNavigation.png)
 
 ## Module Structure:
 
@@ -1035,7 +1035,7 @@ This section covers some of the more commonly used VBA methods in the code. For 
 
 ## Function Flow:
 
-![alt text](https://github.com/Thehobbses/VBA-Analytics-Automation/blob/main/Documentation/Documentation%20Diagrams/FunctionFlow.png)
+![alt text](https://github.com/Thehobbses/VBA-Analytics-Automation/blob/main/Documentation/DocumentationDiagrams/FunctionFlow.png)
 
 ## Errors and Solutions:
 
@@ -1062,7 +1062,7 @@ Error
 - This error occurs when the user does not have the correct VBA Microsoft libraries enabled.
 - Open the VBA environment and navigate to the Tools tab then References and enable the following libraries (specifically Microsoft PowerPoint 16.0 Object Library):
 
-![alt text](https://github.com/Thehobbses/VBA-Analytics-Automation/blob/main/Documentation/Documentation%20Diagrams/Error429.png)
+![alt text](https://github.com/Thehobbses/VBA-Analytics-Automation/blob/main/Documentation/DocumentationDiagrams/Error429.png)
 
 **Error 1004 – PasteSpecial method of class Range failed:**
 
