@@ -758,189 +758,188 @@ This section covers the functions found in the analysis tool, divided by module.
 - **Used In:**
 
   - Charts\_Loop
-```
+
 #### Copy\_Paste\_Wait:
-```
-**Description:**
 
-This function accepts two input parameters, an object to be copied and a place to paste it. There is logic that determines if the paste location is an Excel worksheet or PowerPoint presentation. If it is a worksheet, the formats and values are copied and pasted to the paste\_cell. Then, the column widths and heights are changed:
+- **Description:**
 
-Column Width = cell\_width \* 10
+  - This function accepts two input parameters, an object to be copied and a place to paste it. There is logic that determines if the paste location is an Excel worksheet or PowerPoint presentation. If it is a worksheet, the formats and values are copied and pasted to the paste\_cell. Then, the column widths and heights are changed:
 
-Row Height = (cell\_height \* 10) + 15
+    - Column Width = cell\_width \* 10
 
-When the detected object is a PowerPoint presentation slide, the copied chart is pasted as VBA DataType = 0 using a PasteSpecial method. This effectively pastes an editable Excel table into the slide.
+    - Row Height = (cell\_height \* 10) + 15
 
-**Required Input Parameters:**
+  - When the detected object is a PowerPoint presentation slide, the copied chart is pasted as VBA DataType = 0 using a PasteSpecial method. This effectively pastes an editable Excel table into the slide.
 
-copy\_object: Object, usually an Excel range from the Charts worksheet
+- **Required Input Parameters:**
 
-paste\_object: Object, typically a slide or worksheet
+  - copy\_object: Object, usually an Excel range from the Charts worksheet
 
-**Variables:**
+  - paste\_object: Object, typically a slide or worksheet
 
-copy\_object, paste\_object, data\_range
+- **Variables:**
 
-**Subfunctions:**
+  - copy\_object, paste\_object, data\_range
 
-None
+-**Subfunctions:**
 
-**Used In:**
+  - None
 
-Current\_Chart\_Loop
-```
+- **Used In:**
+
+  - Current\_Chart\_Loop
+
 #### Local\_Folder\_Create\_Copy\_Delete:
-```
-**Description:**
 
-To save the network overhead of saving each individual file as they are built, files are sent to a local folder that is then copied in its entirety to the public drive. This function accepts several strings that determine which operation of the function is executed. It sets fso as a FileSystemObject so that VBA can create and manipulate objects in the Windows File Explorer.
+- **Description:**
 
-Create:
+  - To save the network overhead of saving each individual file as they are built, files are sent to a local folder that is then copied in its entirety to the public drive. This function accepts several strings that determine which operation of the function is executed. It sets fso as a FileSystemObject so that VBA can create and manipulate objects in the Windows File Explorer.
 
-Using local\_destination\_folder as the file path for the method fso, if the folder exists it is deleted to provide a fresh space for new data. A new folder is created at the same path and the template slides from the Controls worksheet are copied to this new folder.
+    - Create:
 
-Ad Hoc:
+      - Using local\_destination\_folder as the file path for the method fso, if the folder exists it is deleted to provide a fresh space for new data. A new folder is created at the same path and the template slides from the Controls worksheet are copied to this new folder.
 
-When run, it creates a sub-folder named for the current DMA in the local folder.
+    - Ad Hoc:
 
-Copy:
+      - When run, it creates a sub-folder named for the current DMA in the local folder.
 
-Deletes the template slide from the local folder then copies all the files over to the folder specified in the public\_destination\_folder path.
+    - Copy:
 
-Delete:
+      - Deletes the template slide from the local folder then copies all the files over to the folder specified in the public\_destination\_folder path.
 
-Deletes the folder at the local\_destination\_folder path.
+    - Delete:
 
-**Required Input Parameters:**
+      - Deletes the folder at the local\_destination\_folder path.
 
-Operation: String, must be one of the four values listed above.
+- **Required Input Parameters:**
 
-**Variables:**
+  - Operation: String, must be one of the four values listed above.
 
-fso, local\_destination\_folder, public\_destination\_folder, user\_slides\_file\_name, user\_dma
+- **Variables:**
 
-**Subfunctions:**
+  - fso, local\_destination\_folder, public\_destination\_folder, user\_slides\_file\_name, user\_dma
 
-None
+- **Subfunctions:**
 
-**Used In:**
+  -  None
 
-Execute, Charts\_Loop
-```
+- **Used In:**
+
+  - Execute, Charts\_Loop
+
 #### Excel\_Open:
-```
-**Description:**
 
-Opens a new workbook for export.
+- **Description:**
 
-**Required Input Parameters:**
+  - Opens a new workbook for export.
 
-None
+- **Required Input Parameters:**
 
-**Variables:**
+  - None
 
-new\_workbook
+- **Variables:**
 
-**Subfunctions:**
+  - new\_workbook
 
-None
+- **Subfunctions:**
 
-**Used In:**
+  - None
 
-Single\_DMA\_Loop
-```
+- **Used In:**
+
+  - Single\_DMA\_Loop
+
 #### Excel\_Save:
-```
-**Description:**
 
-If fast saving is enabled, saves the new\_workbook to the local folder then closes the document. If the user sets the Quarter DV to Ad Hoc, the file is placed into its respective DMA sub-folder. Otherwise, file is saved directly to the public folder.
+- **Description:**
 
-**Required Input Parameters:**
+  - If fast saving is enabled, saves the new\_workbook to the local folder then closes the document. If the user sets the Quarter DV to Ad Hoc, the file is placed into its respective DMA sub-folder. Otherwise, file is saved directly to the public folder.
 
-None
+- **Required Input Parameters:**
 
-**Variables:**
+  - None
 
-new\_workbook, local\_destination\_folder, user\_dma, adhoc\_file\_name
+- **Variables:**
 
-**Subfunctions:**
+  - new\_workbook, local\_destination\_folder, user\_dma, adhoc\_file\_name
 
-None
+- **Subfunctions:**
 
-**Used In:**
+  - None
 
-Single\_DMA\_Loop
-```
+- **Used In:**
+
+  - Single\_DMA\_Loop
+
 #### Excel\_Refresh:
-```
-**Description:**
 
-VBA has a bad habit of &quot;getting ahead of itself,&quot; leading to frustrating errors. As an example, a piece of code that copies an Excel table and then pastes it to another place can attempt to paste _before_ it finishes copying data. This function essentially tells Excel to wait until it has completed its pending calculations.
+- **Description:**
 
-**Required Input Parameters:**
+  - VBA has a bad habit of &quot;getting ahead of itself,&quot; leading to frustrating errors. As an example, a piece of code that copies an Excel table and then pastes it to another place can attempt to paste _before_ it finishes copying data. This function essentially tells Excel to wait until it has completed its pending calculations.
 
-None
+- **Required Input Parameters:**
 
-**Variables:**
+  - None
 
-None
+- **Variables:**
 
-**Subfunctions:**
+  - None
 
-None
+- **Subfunctions:**
 
-**Used In:**
+  - None
 
-Data\_Validation\_Loop, Current\_Chart\_Loop, Copy\_Paste\_Wait Excel\_Save
-```
+- **Used In:**
+
+  - Data\_Validation\_Loop, Current\_Chart\_Loop, Copy\_Paste\_Wait Excel\_Save
+
 #### Excel\_Recalc:
-```
-**Description:**
 
-Recalculates each worksheet in the workbook to populate charts with the correct DMA data.
+- **Description:**
 
-**Required Input Parameters:**
+  - Recalculates each worksheet in the workbook to populate charts with the correct DMA data.
 
-None
+- **Required Input Parameters:**
 
-**Variables:**
+  - None
 
-None
+- **Variables:**
 
-**Subfunctions:**
+  - None
 
-None
+- **Subfunctions:**
 
-**Used In:**
+  - None
 
-Data\_Validation\_Loop
-```
+- **Used In:**
+
+  - Data\_Validation\_Loop
+
 #### Excel\_Worksheet\_Exists:
-```
-**Description:**
 
-Determines if a worksheet exists within the specified workbook. Returns false if none is found.
+- **Description:**
 
-**Required Input Parameters:**
+  - Determines if a worksheet exists within the specified workbook. Returns false if none is found.
 
-sheet\_name: String, the name of the sheet that is being evaluated
+- **Required Input Parameters:**
 
-wb: Workbook, the workbook object to evaluate
+  - sheet\_name: String, the name of the sheet that is being evaluated
+  - wb: Workbook, the workbook object to evaluate
 
-**Variables:**
+- **Variables:**
 
-sheet, wb, sheet\_name
+  - sheet, wb, sheet\_name
 
-**Subfunctions:**
+- **Subfunctions:**
 
-None
+  - None
 
-**Used In:**
+- **Used In:**
 
-Current\_Chart\_Loop
-```
+  - Current\_Chart\_Loop
+
 #### PowerPoint\_Open:
-```
+
 **Description:**
 
 Opens the PowerPoint app and a new presentation from the user specified template file path, which is minimized to the tray. If the Chart Type DV is set to All, it opens the blank template slide and extends it to the number of slides needed to capture all the data.
