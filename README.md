@@ -57,7 +57,7 @@ Sets the number of DMAs for which the tool produces Excel/PowerPoint files. All 
 - All: every DMA in the Current DMA data validation list
 - Selected: only the currently selected DMA
 
-Source: list -\&gt; [All, Selected]
+Source: list - [All, Selected]
 
 ### Output:
 
@@ -67,7 +67,7 @@ The tool is set up in such a way that the user can decide if they wish to produc
 - PowerPoint: produces only .ppt files
 - Both: produces both .xlsx and .ppt files
 
-Source: list -\&gt; [Excel, PowerPoint, Both]
+Source: list - [Excel, PowerPoint, Both]
 
 ### Current DMA:
 
@@ -75,7 +75,7 @@ A DV list of all DMAs in the system. Charts reference this DV and all fields in 
 
 - [DMA]: the name of a given DMA that is used for lookups and to name the file when it is saved
 
-Source: list -\&gt; [=&#39;General Lookups&#39;!$A$2:$A$113]
+Source: list - [General Lookups!$A$2:$A$113]
 
 ### Chart List:
 
@@ -85,7 +85,7 @@ Controls what kinds of chart outputs are returned from the tool.
 - All: produces output for a given DMA that contains **all** charts found in Parameters column E
 - [other]: produces the specified chart - DV is automatically populated based on Parameters column E
 
-Source: list -\&gt; [=&#39;Parameters&#39;!$E$2:$E$200]
+Source: list - [Parameters!$E$2:$E$200]
 
 ### Quarter:
 
@@ -94,7 +94,7 @@ User input determines in which Quarter folder the data will be saved.
 - Ad Hoc: used specifically for one-off analysis on a given DMA
 - Q1-Q4: mostly used for swings – useful for historical data
 
-Source: list -\&gt; [Ad Hoc, Q1, Q2, Q3, Q4]
+Source: list - [Ad Hoc, Q1, Q2, Q3, Q4]
 
 ### Year:
 
@@ -102,7 +102,7 @@ User input determines in which Year folder the data will be saved.
 
 - 2021-2026: year of data in analysis
 
-Source: list -\&gt; [2021,2022,2023,2024,2025,2026]
+Source: list - [2021,2022,2023,2024,2025,2026]
 
 ### Slide File Name:
 
@@ -111,7 +111,7 @@ User input determines which slide deck is populated with the selected slides.
 - GeneralSlides.pptx: standard slide deck for swings reporting
 - BlankFormatSlide.pptx: standard mostly blank slide for individual chart and all chart output
 
-Source: list -\&gt; [GeneralSlides.pptx, BlankFormatSlide.pptx]
+Source: list - [GeneralSlides.pptx, BlankFormatSlide.pptx]
 
 ### Execute:
 
