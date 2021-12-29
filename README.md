@@ -71,7 +71,7 @@ Source: list - [Excel, PowerPoint, Both]
 
 ### Current DMA:
 
-A DV list of all DMAs in the system. Charts reference this DV and all fields in a chart are populated on a lookup of that value. DMAs can be added to this list via addition to General Lookups column A and updating the DV list range to include the new DMA (i.e. $A$2:$A$113 -\&gt; $A$2:$A$114).
+A DV list of all DMAs in the system. Charts reference this DV and all fields in a chart are populated on a lookup of that value. DMAs can be added to this list via addition to General Lookups column A and updating the DV list range to include the new DMA (i.e. $A$2:$A$113 becomes $A$2:$A$114).
 
 - [DMA]: the name of a given DMA that is used for lookups and to name the file when it is saved
 
