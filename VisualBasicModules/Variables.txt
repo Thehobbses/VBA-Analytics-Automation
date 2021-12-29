@@ -1,0 +1,109 @@
+Attribute VB_Name = "Variables"
+    'Workbook
+    Public Master As Workbook
+    Public new_workbook As Workbook
+    
+    'Worsksheets
+    Public ws_controls As Worksheet
+    Public ws_charts As Worksheet
+    Public ws_parameters As Worksheet
+    Public ws_lookups As Worksheet
+    Public ws_chart_worksheet As Worksheet
+    
+    'User Selections
+    Public user_dma As Range
+    Public user_dma_safe As String
+    Public user_export_quantity As String
+    Public user_export_type As String
+    Public user_chart_type As String
+    Public user_quarter As String
+    Public user_year As String
+    Public user_save_type As String
+    
+    'File path
+    Public public_destination_folder As String
+    Public public_template_folder As String
+    Public local_destination_folder As String
+    Public adhoc_file_name As String
+    Public date_string As String
+    
+    'Slides File Paths
+    Public main_slides_file_name As String
+    Public other_slides_file_name As String
+    Public user_slides_file_name As String
+    
+    'Local Folder Creation
+    Public fso As Object
+    
+    'PowerPoint
+    Public powerpoint_app As Object
+    Public delete_index_collection As Collection
+    Public new_presentation As Object
+    Public main_slides_range As Range
+    Public all_slides_range As Range
+    Public selected_slides_count As Double
+    Public all_slides_count As Double
+    Public ppt_slide As Object
+    Public ppt_shape As Object
+    Public ppt_index As Integer
+    
+    
+    'Loop Controls
+    Public loop_index_outer As Integer
+    Public loop_index_inner As Integer
+    Public loop_current_chart As String
+    
+    'Local
+    Public worksheet_name As String
+    Public data_range As String
+    Public horizontal_position As Integer
+    Public vertical_position As Integer
+    Public text_size As Integer
+    Public cell_height As Double
+    Public cell_width As Double
+    Public centered As Integer
+    Public paste_cell As String
+
+
+Sub Env_Variables()
+    'Workbooks
+    Set Master = Application.Workbooks("MarketingAnalysisTool")
+    
+    'Worksheets
+    Set ws_controls = Master.Worksheets("Controls")
+    Set ws_parameters = Master.Worksheets("Parameters")
+    Set ws_charts = Master.Worksheets("Charts")
+    Set ws_lookups = Master.Worksheets("General Lookups")
+    
+    'User Preferences
+    Set user_dma = ws_controls.Range("H18")
+    user_export_quantity = ws_controls.Range("H16")
+    user_export_type = ws_controls.Range("H17")
+    user_chart_type = ws_controls.Range("H19")
+    user_quarter = ws_controls.Range("H20")
+    user_year = ws_controls.Range("H21")
+    user_save_type = ws_controls.Range("H25")
+    
+    'File path
+    local_destination_folder = ws_controls.Range("H24")
+    public_destination_folder = ws_controls.Range("H23") & "\Data\" & user_year & "\" & user_quarter & "\"
+    public_template_folder = ws_controls.Range("H23") & "\InputLibrary\"
+    date_string = Replace(Date, "/", "-") & "_"
+    adhoc_file_name = date_string & user_chart_type
+    
+    'Slides file path
+    main_slides_file_name = ws_lookups.Range("Q2")
+    other_slides_file_name = ws_lookups.Range("Q3")
+    user_slides_file_name = main_slides_file_name
+        'Automatically set correct PowerPoint template file name based on user input
+        If StrComp(user_chart_type, "Main") <> 0 Then
+            user_slides_file_name = other_slides_file_name
+        End If
+        
+    'PowerPoint
+    Set main_slides_range = ws_parameters.Range("B3:B50")
+    Set all_slides_range = ws_parameters.Range("E3:E50")
+    selected_slides_count = Application.WorksheetFunction.CountA(main_slides_range)
+    all_slides_count = Application.WorksheetFunction.CountA(all_slides_range)
+
+End Sub

@@ -1,0 +1,25 @@
+Attribute VB_Name = "Main"
+Sub Execute()
+
+    Application.CutCopyMode = False
+    Application.ScreenUpdating = False
+    Application.DisplayAlerts = False
+    
+    Call Env_Variables
+    
+    If StrComp(user_save_type, "Fast") = 0 Then
+        Local_Folder_Create_Copy_Delete ("Create")
+    End If
+    
+    If StrComp(user_export_quantity, "All") = 0 Then
+        Call Data_Validation_Loop
+    ElseIf StrComp(user_export_quantity, "Selected") = 0 Then
+        Call Single_DMA_Loop
+    End If
+    
+    If StrComp(user_save_type, "Fast") = 0 Then
+        Local_Folder_Create_Copy_Delete ("Copy")
+        Local_Folder_Create_Copy_Delete ("Delete")
+    End If
+    
+End Sub

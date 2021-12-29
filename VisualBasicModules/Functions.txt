@@ -1,0 +1,418 @@
+Attribute VB_Name = "Functions"
+
+Sub Data_Validation_Loop()
+    'Loops through all items in a data validation list, executing a block of code on each loop. Used with a DMA Data Val list in this tool
+    'Courtesy of: https://exceloffthegrid.com/loop-through-each-item-in-a-data-validation-list-with-vba/
+    
+    'Initialize core variables
+    Dim data_validation_array As Variant
+    Dim i As Integer
+    Dim rows As Integer
+    
+    'If Data Validation list is not a range, ignore errors
+    On Error Resume Next
+    
+    'Create an array from the Data Validation formula, without creating a multi-dimensional array from the range
+    rows = Range(Replace(user_dma.Validation.Formula1, "=", "")).rows.Count
+    ReDim data_validation_array(1 To rows)
+    
+    'Handles an error where the first element of the Data Validation list is blank
+    If IsEmpty(user_dma) Then
+        ReDim data_validation_array(2 To rows)
+    End If
+    
+    'Replacing values in the validation formula to make it into an array that can be iterated
+    For i = 1 To rows
+        data_validation_array(i) = Range(Replace(user_dma.Validation.Formula1, "=", "")).Cells(i, 1)
+    Next i
+    
+    '----------------------
+    'DATA VALIDATION LOOP ERROR HANDLING
+    '----------------------
+    
+    'If not a range, then try splitting a string
+    If Err.Number <> 0 Then
+        Err.Clear
+        data_validation_array = Split(user_dma.Validation.Formula1, ",")
+    End If
+
+    'Some other error has occured so exit sub
+    If Err.Number <> 0 Then Exit Sub
+    
+    'Reinstate error checking
+    On Error GoTo 0
+    
+    
+    '----------------------
+    'DATA VALIDATION LOOP
+    '----------------------
+    'Loop through all the values in the Data Validation Array
+    
+    For i = LBound(data_validation_array) To UBound(data_validation_array)
+        
+        'Change the value in the data validation cell
+        user_dma.Value = data_validation_array(i)
+        
+        'Force the sheet to recalculate
+        Set delete_index_collection = New Collection
+        Call Excel_Recalc
+        Call Excel_Refresh
+        Call Single_DMA_Loop
+        
+
+    'Progress to the next value in the Data Validation dropdown
+    Next i
+
+End Sub
+
+Sub Single_DMA_Loop()
+    'Data Validation Loop Range
+    Set user_dma = ws_controls.Range("H18")
+    
+    'File Name
+    user_dma_safe = Replace(user_dma.Value, "/", "-") 'Slashes kill the automated saving because Windows interprets them as a new level in the file path
+    
+    If StrComp(user_quarter, "Ad Hoc") = 0 And StrComp(user_save_type, "Fast") = 0 Then
+        Local_Folder_Create_Copy_Delete ("Ad Hoc")
+    End If
+    
+    'Logic for generating excel and powerpoint files based on the current DMA. Can be nested in the DV loop or used solo for single-DMA reports
+    If StrComp(user_export_type, "Excel") = 0 Or StrComp(user_export_type, "Both") = 0 Then
+        Call Excel_Open
+    End If
+
+    If StrComp(user_export_type, "PowerPoint") = 0 Or StrComp(user_export_type, "Both") = 0 Then
+        Call PowerPoint_Open
+    End If
+    
+    Call Charts_Loop
+    
+    If StrComp(user_export_type, "Excel") = 0 Or StrComp(user_export_type, "Both") = 0 Then
+        new_workbook.Sheets("Sheet1").Delete    'Delete the extra Sheet1 from generating the new workbook
+        Call Excel_Save
+    End If
+
+    If StrComp(user_export_type, "PowerPoint") = 0 Or StrComp(user_export_type, "Both") = 0 Then
+        'Delete excess dynamic slides as specified in Parameters P:Y
+        For Each slide_obj In delete_index_collection
+            slide_obj.Delete
+        Next slide_obj
+        
+        Call PowerPoint_Save
+    End If
+End Sub
+
+Sub Charts_Loop()
+    
+    If StrComp(user_chart_type, "Main") = 0 Then
+        
+        For loop_index_outer = 3 To selected_slides_count + 2
+            loop_current_chart = ws_parameters.Cells(loop_index_outer, 2).Value
+            Call Current_Chart_Loop
+        Next loop_index_outer
+    
+    ElseIf StrComp(user_chart_type, "All") = 0 Then
+        
+        For loop_index_outer = 3 To all_slides_count + 2
+            loop_current_chart = ws_parameters.Cells(loop_index_outer, 5).Value
+            Call Current_Chart_Loop
+        Next loop_index_outer
+        
+    Else
+        loop_current_chart = user_chart_type
+        loop_index_outer = 3
+        Call Current_Chart_Loop
+        
+    End If
+    
+End Sub
+
+Sub Current_Chart_Loop()
+    'Extract Parameters
+    
+    For loop_index_inner = 3 To all_slides_count + 2
+        With ws_parameters
+        
+            inner_loop_slide = .Cells(loop_index_inner, 5).Value
+            
+            If StrComp(inner_loop_slide, loop_current_chart) = 0 Then
+                worksheet_name = .Cells(loop_index_inner, 4).Value
+                data_range = .Cells(loop_index_inner, 6).Value
+                horizontal_position = .Cells(loop_index_inner, 7).Value
+                vertical_position = .Cells(loop_index_inner, 8).Value
+                text_size = .Cells(loop_index_inner, 9).Value
+                cell_height = .Cells(loop_index_inner, 10).Value
+                cell_width = .Cells(loop_index_inner, 11).Value
+                centered = .Cells(loop_index_inner, 12).Value
+                paste_cell = .Cells(loop_index_inner, 13).Value
+            End If
+        End With
+    Next loop_index_inner
+    
+    'Excel
+    If StrComp(user_export_type, "Excel") = 0 Or StrComp(user_export_type, "Both") = 0 Then
+
+        If Not Excel_Worksheet_Exists(worksheet_name, new_workbook) Then
+            new_workbook.Sheets.Add.Name = worksheet_name
+        End If
+        
+        Set ws_chart_worksheet = new_workbook.Sheets(worksheet_name)
+        Call Copy_Paste_Wait(ws_charts, ws_chart_worksheet)
+        
+        new_workbook.Saved = True
+    End If
+    
+    'PowerPoint
+    If StrComp(user_export_type, "PowerPoint") = 0 Or StrComp(user_export_type, "Both") = 0 Then
+        
+        ppt_index = ws_parameters.Cells(loop_index_outer, 1).Value 'Slide Index
+        
+        Set ppt_slide = new_presentation.slides(ppt_index)
+        
+        delete_dynamic_marker = 0   'This is the control marker for deletion of slides found for the DMA in Parameters columns P:Y
+        
+        For index_delete_column = 16 To 25
+            For index_delete_row = 3 To 50
+                If StrComp(ws_parameters.Cells(index_delete_row, index_delete_column), loop_current_chart) = 0 Then
+                    delete_dynamic_marker = 1
+                End If
+            Next index_delete_row
+        Next index_delete_column
+        
+        If delete_dynamic_marker = 1 Then
+            delete_index_collection.Add ppt_slide
+        End If
+        
+        Call Copy_Paste_Wait(ws_charts, ppt_slide.Shapes)
+        
+        Set ppt_shape = ppt_slide.Shapes(ppt_slide.Shapes.Count)
+        
+        Call PowerPoint_Object_Text_Size(ppt_shape, ppt_slide)
+        Call PowerPoint_Slide_Move(ppt_shape, new_presentation, ppt_index)
+        
+        new_presentation.Saved = True
+    End If
+    
+    Call Excel_Refresh
+
+End Sub
+
+Sub Copy_Paste_Wait(copy_object As Object, paste_object As Object)
+
+    If StrComp(TypeName(paste_object), "Worksheet") = 0 Then
+        Call Excel_Refresh
+        copy_object.Range(data_range).Copy
+        paste_object.Range(paste_cell).PasteSpecial Paste:=xlPasteValues
+        paste_object.Range(paste_cell).PasteSpecial Paste:=xlPasteFormats
+        paste_object.Columns("A:AZ").ColumnWidth = cell_width * 10
+        paste_object.rows("1:100").RowHeight = (cell_height * 10) + 15
+    Else
+        copy_object.Range(data_range).Copy
+        paste_object.PasteSpecial DataType:=0
+    End If
+
+    Application.CutCopyMode = False
+
+End Sub
+
+Sub Local_Folder_Create_Copy_Delete(operation As String)
+    
+    'Gives access to Windows file system:   https://docs.microsoft.com/en-us/office/vba/language/reference/user-interface-help/filesystemobject-object
+    Set fso = CreateObject("Scripting.FileSystemObject")
+
+    If operation = "Create" Then
+        'Delete the folder if the local version was not wiped after prior execution
+        If fso.FolderExists(local_destination_folder) Then
+            fso.DeleteFolder local_destination_folder, True
+        End If
+        
+        'Build new folder with subfolders for Excel and PowerPoint output
+        fso.CreateFolder (local_destination_folder)
+
+        'Save a local copy of the template slide deck to avoid constant calls to the remote drives
+        fso.CopyFile public_template_folder & user_slides_file_name, local_destination_folder & "\" & user_slides_file_name
+    
+    ElseIf operation = "Ad Hoc" Then
+        fso.CreateFolder (local_destination_folder & "\" & user_dma_safe)
+    
+    ElseIf operation = "Copy" Then
+        'Copy entire local folder to remote drive, merging the new local and existing remote data for a given year and quarter
+        fso.DeleteFile local_destination_folder & "\" & user_slides_file_name
+        
+        If StrComp(user_quarter, "Ad Hoc") = 0 Then
+            fso.CopyFolder local_destination_folder & "\*", public_destination_folder, True
+        Else
+            fso.CopyFile local_destination_folder & "\*", public_destination_folder, True
+        End If
+        
+    ElseIf operation = "Delete" Then
+        'Delete local folder to save space on user's machine and avoid errors on subsequent executions
+        fso.DeleteFolder local_destination_folder, True
+    
+    End If
+    
+End Sub
+
+Sub Excel_Open()
+    'adds new workbook
+    Set new_workbook = Workbooks.Add
+    
+    new_workbook.Saved = True
+    Master.Activate
+        
+End Sub
+
+Sub Excel_Save()
+
+    Application.DisplayAlerts = False
+    
+    If StrComp(user_save_type, "Fast") = 0 Then
+        If StrComp(user_quarter, "Ad Hoc") <> 0 Then
+            new_workbook.SaveAs local_destination_folder & "\" & user_dma_safe & ".xlsx"
+        Else
+            new_workbook.SaveAs local_destination_folder & "\" & user_dma_safe & "\" & adhoc_file_name & ".xlsx"
+        End If
+        
+    ElseIf StrComp(user_save_type, "Direct (Not Recommended)") = 0 Then
+        If StrComp(user_quarter, "Ad Hoc") <> 0 Then
+            new_workbook.SaveAs public_destination_folder & "\" & user_dma_safe & ".xlsx"
+        Else
+            new_workbook.SaveAs public_destination_folder & "\" & user_dma_safe & "\" & adhoc_file_name & ".xlsx"
+        End If
+        
+    End If
+    
+    Call Excel_Refresh
+    new_workbook.Close
+    
+End Sub
+
+Sub Excel_Refresh()
+'https://stackoverflow.com/questions/62978078/application-calculateuntilasyncqueriesdone-crashes-excel
+    DoEvents
+    With Application
+        .Calculation = xlCalculationAutomatic
+        .CalculateUntilAsyncQueriesDone
+
+        Do Until .CalculationState = xlDone
+        Loop
+        
+        .Calculation = xlCalculationManual
+    End With
+    
+End Sub
+
+Sub Excel_Recalc()
+    For Each datatab In ActiveWorkbook.Worksheets
+        datatab.Calculate
+    Next
+    
+End Sub
+
+Function Excel_Worksheet_Exists(sheet_name As String, Optional wb As Workbook) As Boolean
+    Dim sheet As Worksheet
+
+    If wb Is Nothing Then Set wb = ThisWorkbook
+    On Error Resume Next
+    Set sheet = wb.Sheets(sheet_name)
+    On Error GoTo 0
+    Excel_Worksheet_Exists = Not sheet Is Nothing
+End Function
+
+Sub PowerPoint_Open()
+    'Open PowerPoint app and declare presentation
+    'Error 429  Tools -> References -> Microsoft Powerpoint 16.0 Object
+    
+    On Error Resume Next
+    Set powerpoint_app = GetObject(class:="PowerPoint.Application")
+    On Error GoTo 0
+    
+    'If PowerPoint is not already open then open PowerPoint
+    If powerpoint_app Is Nothing Then Set powerpoint_app = New PowerPoint.Application
+    
+    'Set the template slides as the active presentation
+    Set new_presentation = powerpoint_app.Presentations.Open(local_destination_folder & "\" & user_slides_file_name)
+    powerpoint_app.ActiveWindow.WindowState = ppWindowMinimized 'Keep window minimized
+    
+    If StrComp(user_chart_type, "All") = 0 Then
+        Application.CutCopyMode = False
+        new_presentation.slides(1).Copy
+        For slide_count = 1 To all_slides_count
+            new_presentation.slides.Paste
+        Next slide_count
+    End If
+    
+End Sub
+
+Sub PowerPoint_Save()
+    'Save active PowerPoint
+    If StrComp(user_save_type, "Fast") = 0 Then
+        If StrComp(user_quarter, "Ad Hoc") <> 0 Then
+            new_presentation.SaveAs local_destination_folder & "\" & user_dma_safe & ".pptx"
+        Else
+            new_presentation.SaveAs local_destination_folder & "\" & user_dma_safe & "\" & adhoc_file_name & ".pptx"
+        End If
+    
+    ElseIf StrComp(user_save_type, "Direct (Not Recommended)") = 0 Then
+        If StrComp(user_quarter, "Ad Hoc") <> 0 Then
+            new_presentation.SaveAs public_destination_folder & "\" & user_dma_safe & ".pptx"
+        Else
+            new_presentation.SaveAs public_destination_folder & "\" & user_dma_safe & "\" & adhoc_file_name & ".pptx"
+        End If
+        
+    End If
+    DoEvents
+    new_presentation.Close
+    
+End Sub
+
+Sub PowerPoint_Object_Text_Size(shape_name As Object, slide_obj As Object)
+    
+    Dim row_index As Integer
+    Dim column_index As Integer
+    Dim minimum_width As Single
+    Dim pasted_table As Table
+    
+    Set pasted_table = shape_name.Table
+    
+    For column_index = 1 To pasted_table.Columns.Count
+        For row_index = 1 To pasted_table.rows.Count
+        
+            With pasted_table.Cell(row_index, column_index).Shape.TextFrame
+                .TextRange.Font.Size = text_size
+            End With
+            
+            pasted_table.rows(row_index).Height = cell_height * 72
+        
+        Next row_index
+        
+        pasted_table.Columns(column_index).Width = cell_width * 72
+        
+    Next column_index
+    
+End Sub
+
+Sub PowerPoint_Slide_Move(shape_obj As Object, slide_obj As Object, slide_index As Integer)
+        
+    slide_obj.slides(slide_index).Select  'Select the slide to ensure correct shape placement
+    shape_obj.LockAspectRatio = False   'Unlock the aspect ratio of the copy
+
+    If centered = 0 Then
+    
+        With shape_obj
+                .Left = horizontal_position * 72  'Change the left-rigt placement. Higher values move object further right
+                .Top = vertical_position * 72  'Change the up-down placement. Higher values move object further down
+        End With
+        
+    Else
+
+        With slide_obj.PageSetup
+            shape_obj.Left = (.SlideWidth \ 2) - (shape_obj.Width \ 2)
+            shape_obj.Top = (.SlideHeight \ 2) - (shape_obj.Height \ 2)
+        End With
+        
+    End If
+
+End Sub
+
+
