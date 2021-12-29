@@ -940,108 +940,108 @@ This section covers the functions found in the analysis tool, divided by module.
 
 #### PowerPoint\_Open:
 
-**Description:**
+- **Description:**
 
-Opens the PowerPoint app and a new presentation from the user specified template file path, which is minimized to the tray. If the Chart Type DV is set to All, it opens the blank template slide and extends it to the number of slides needed to capture all the data.
+  - Opens the PowerPoint app and a new presentation from the user specified template file path, which is minimized to the tray. If the Chart Type DV is set to All, it opens the blank template slide and extends it to the number of slides needed to capture all the data.
 
-**Required Input Parameters:**
+- **Required Input Parameters:**
 
-None
+  - None
 
-**Variables:**
+- **Variables:**
 
-powerpoint\_app, new\_presentation, all\_slides\_count
+  - powerpoint\_app, new\_presentation, all\_slides\_count
 
-**Subfunctions:**
+- **Subfunctions:**
 
-None
+  - None
 
-**Used In:**
+- **Used In:**
 
-Single\_DMA\_Loop
-```
+  - Single\_DMA\_Loop
+
 #### PowerPoint\_Save:
-```
-**Description:**
 
-If fast saving is enabled, saves new\_presentation to the correct local folder location based on whether the Quarter DV is set to Ad Hoc or not. If it is set to Ad Hoc, the presentation is saved to the DMA specific sub-folder. Otherwise, file is saved directly to the public folder.
+- **Description:**
 
-**Required Input Parameters:**
+  - If fast saving is enabled, saves new\_presentation to the correct local folder location based on whether the Quarter DV is set to Ad Hoc or not. If it is set to Ad Hoc, the presentation is saved to the DMA specific sub-folder. Otherwise, file is saved directly to the public folder.
 
-None
+- **Required Input Parameters:**
 
-**Variables:**
+  - None
 
-New\_presentation, local\_destination\_folder, user\_dma, adhoc\_file\_name
+- **Variables:**
 
-**Subfunctions:**
+  - New\_presentation, local\_destination\_folder, user\_dma, adhoc\_file\_name
 
-None
+- **Subfunctions:**
 
-**Used In:**
+  - None
 
-Single\_DMA\_Loop
-```
+- **Used In:**
+
+  - Single\_DMA\_Loop
+
 #### PowerPoint\_Object\_Text\_Size:
-```
-**Description:**
 
-This function takes the table shape object on the slide and iterates through each row and column in that table to pass through every possible cell. Each cell has its text size set to the Parameters value for the chart. Similarly, rows and columns are resized to the values from the Parameters worksheet.
+- **Description:**
 
-**Required Input Parameters:**
+  - This function takes the table shape object on the slide and iterates through each row and column in that table to pass through every possible cell. Each cell has its text size set to the Parameters value for the chart. Similarly, rows and columns are resized to the values from the Parameters worksheet.
 
-shape\_name: Shape Object, typically ppt\_shape
+- **Required Input Parameters:**
 
-slide\_obj: Slide Object, typically ppt\_slide
+  - shape\_name: Shape Object, typically ppt\_shape
 
-**Variables:**
+  - slide\_obj: Slide Object, typically ppt\_slide
 
-row\_index (index), column\_index (index), minimum\_width, pasted\_table, text\_size, cell\_height, cell\_width
+- **Variables:**
 
-**Subfunctions:**
+  - row\_index (index), column\_index (index), minimum\_width, pasted\_table, text\_size, cell\_height, cell\_width
 
-None
+- **Subfunctions:**
 
-**Used In:**
+  - None
 
-Current\_Chart\_Loop
-```
+- **Used In:**
+
+  - Current\_Chart\_Loop
+
 #### PowerPoint\_Slide\_Move:
-```
-**Description:**
 
-Accepts a slide and shape then repositions that shape on the slide based on position values from the Parameters worksheet. If the slide is centered, the horizontal and vertical positioning values are ignored.
+- **Description:**
 
-**Required Input Parameters:**
+  - Accepts a slide and shape then repositions that shape on the slide based on position values from the Parameters worksheet. If the slide is centered, the horizontal and vertical positioning values are ignored.
 
-shape\_obj: Shape Object; the chart from the slide, typically ppt\_shape
+- **Required Input Parameters:**
 
-slide\_obj: Slide Object; the current slide, typically new\_presentation
+  - shape\_obj: Shape Object; the chart from the slide, typically ppt\_shape
 
-slide\_index: Integer; the index number of the slide\_obj
+  - slide\_obj: Slide Object; the current slide, typically new\_presentation
 
-**Variables:**
+  - slide\_index: Integer; the index number of the slide\_obj
 
-slide\_obj, shape\_obj, slide\_index
+- **Variables:**
 
-**Subfunctions:**
+  - slide\_obj, shape\_obj, slide\_index
 
-None
+- **Subfunctions:**
 
-**Used In:**
+  - None
 
-Current\_Chart\_Loop
-```
+- **Used In:**
+
+  - Current\_Chart\_Loop
+
 
 ### Common VBA Methods:
 
 This section covers some of the more commonly used VBA methods in the code. For the most detailed information possible, google the method and read Microsoft official documentation.
-```
+
 - Application.CutCopyMode: clear clipboard
 - Application.ScreenUpdating: prevents application from updating the screen as it calculates
 - Application.DisplayAlerts: suppresses alerts from applications
 - StrComp: compares two strings, equality = 0
-```
+
 
 
 ## Function Flow:
@@ -1068,20 +1068,20 @@ Error
 
 ### Common Errors
 
-**Error 429:**
+- **Error 429:**
 
-- This error occurs when the user does not have the correct VBA Microsoft libraries enabled.
-- Open the VBA environment and navigate to the Tools tab then References and enable the following libraries (specifically Microsoft PowerPoint 16.0 Object Library):
+  - This error occurs when the user does not have the correct VBA Microsoft libraries enabled.
+  - Open the VBA environment and navigate to the Tools tab then References and enable the following libraries (specifically Microsoft PowerPoint 16.0 Object Library):
 
 ![alt text](https://github.com/Thehobbses/VBA-Analytics-Automation/blob/main/Documentation/DocumentationDiagrams/Error429.png)
 
-**Error 1004 – PasteSpecial method of class Range failed:**
+- **Error 1004 – PasteSpecial method of class Range failed:**
 
-- The clipboard is probably empty, and the code is trying to paste nothing.
-- Make sure you are passing a worksheet to Copy\_Paste\_Wait if it fails on the Excel export, or a slide if it fails on the PowerPoint export. Open and Close Excel fully and attempt again.
+  - The clipboard is probably empty, and the code is trying to paste nothing.
+  - Make sure you are passing a worksheet to Copy\_Paste\_Wait if it fails on the Excel export, or a slide if it fails on the PowerPoint export. Open and Close Excel fully and attempt again.
 
-**Error 70 – Permission Denied:**
+- **Error 70 – Permission Denied:**
 
-- This is an error that can crop up when VBA attempts to save over an open PowerPoint or Excel file.
-- Reset the VBA environment by closing Excel and PowerPoint fully and opening it again. Be sure the local temporary folder or any subfiles are not open.
+  - This is an error that can crop up when VBA attempts to save over an open PowerPoint or Excel file.
+  - Reset the VBA environment by closing Excel and PowerPoint fully and opening it again. Be sure the local temporary folder or any subfiles are not open.
 
