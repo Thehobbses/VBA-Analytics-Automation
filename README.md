@@ -104,15 +104,6 @@ User input determines in which Year folder the data will be saved.
 
 Source: list - [2021,2022,2023,2024,2025,2026]
 
-### Slide File Name:
-
-User input determines which slide deck is populated with the selected slides.
-
-- GeneralSlides.pptx: standard slide deck for swings reporting
-- BlankFormatSlide.pptx: standard mostly blank slide for individual chart and all chart output
-
-Source: list - [GeneralSlides.pptx, BlankFormatSlide.pptx]
-
 ### Execute:
 
 Pressing **Execute** will run the code using the options that the user set. It is assigned to the Execute macro.
