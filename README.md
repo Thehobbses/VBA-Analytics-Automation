@@ -1,4 +1,4 @@
-# VBA-Marketing-Analytics-Chart/Presentation-Automation
+# Marketing Analytics Automation
 
 **Administrators:**
 
